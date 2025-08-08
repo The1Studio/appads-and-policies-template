@@ -72,7 +72,7 @@ export async function GET() {
     html = html.replace(/<a(\s[^>]*)?>/gi, (m) => {
       if (!/href\s*=/.test(m)) return m;
       // remove existing target/rel to avoid duplicates
-      let out = m.replace(/\s(target|rel)=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
+      const out = m.replace(/\s(target|rel)=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, '');
       return out.replace(/>$/, " target=\"_blank\" rel=\"noopener noreferrer\">");
     });
 
