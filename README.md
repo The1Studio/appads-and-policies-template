@@ -1,36 +1,74 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# App Ads & Policies Template
 
-## Getting Started
+A Next.js application that serves app-ads.txt and privacy policies content from external URLs with hourly caching.
 
-First, run the development server:
+## Features
+
+- **/app-ads.txt** - Serves app-ads.txt content from a configured URL
+- **/policies** - Serves privacy policy content from a configured URL  
+- **Automatic caching** - Content is cached for 1 hour to reduce load on source URLs
+- **Error handling** - Gracefully handles fetch errors and serves cached content when available
+
+## Setup
+
+1. Clone this repository
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env.local` file in the root directory with your URLs:
+   ```
+   APP_ADS_URL=https://your-app-ads-url.com
+   POLICIES_URL=https://sites.google.com/view/your-privacy-policy/home
+   ```
+
+4. Run the development server:
+   ```bash
+   npm run dev
+   ```
+
+5. Open [http://localhost:3000](http://localhost:3000) to see the app
+
+## Deployment to Vercel
+
+1. Push your code to a GitHub repository
+
+2. Go to [Vercel](https://vercel.com) and import your repository
+
+3. Configure environment variables in Vercel:
+   - `APP_ADS_URL` - URL for app-ads.txt content
+   - `POLICIES_URL` - URL for privacy policy content
+
+4. Deploy!
+
+## How it Works
+
+The application fetches content from the configured URLs and caches it for 1 hour. When a request comes in:
+
+1. Check if cached data exists and is less than 1 hour old
+2. If cache is valid, return cached data
+3. If cache is expired or doesn't exist, fetch fresh data from the URL
+4. Cache the new data and return it
+5. If fetch fails but cached data exists, return the stale cache
+
+## API Routes
+
+- `GET /app-ads.txt` - Returns plain text app-ads content
+- `GET /policies` - Returns HTML privacy policy content
+
+## Environment Variables
+
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `APP_ADS_URL` | URL to fetch app-ads.txt content from | `https://example.com/app-ads.txt` |
+| `POLICIES_URL` | URL to fetch privacy policy content from | `https://example.com/privacy` |
+
+## Development
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run dev    # Start development server
+npm run build  # Build for production
+npm run start  # Start production server
+npm run lint   # Run linter
 ```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
