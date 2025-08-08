@@ -90,11 +90,11 @@ class DataCache {
 </html>`;
   }
 
-  async fetchData(key: string, url: string, isHtml: boolean = false): Promise<string> {
-    const cached = this.cache.get(key);
+  async fetchData(key: string, url: string, isHtml: boolean = false, skipCache: boolean = false): Promise<string> {
+    const cached = skipCache ? undefined : this.cache.get(key);
     const now = Date.now();
 
-    if (cached && (now - cached.timestamp) < this.CACHE_DURATION) {
+    if (!skipCache && cached && (now - cached.timestamp) < this.CACHE_DURATION) {
       return cached.data;
     }
 
@@ -105,7 +105,8 @@ class DataCache {
           'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
         },
         redirect: 'follow',
-        next: { revalidate: 3600 }
+        cache: 'no-store',
+        next: { revalidate: 0 }
       });
       
       if (!response.ok) {
@@ -120,14 +121,16 @@ class DataCache {
         data = this.wrapInCleanHtml(textContent);
       }
       
-      this.cache.set(key, {
-        data,
-        timestamp: now
-      });
+      if (!skipCache) {
+        this.cache.set(key, {
+          data,
+          timestamp: now
+        });
+      }
 
       return data;
     } catch (error) {
-      if (cached) {
+      if (!skipCache && cached) {
         console.error(`Error fetching data from ${url}, using cached version:`, error);
         return cached.data;
       }

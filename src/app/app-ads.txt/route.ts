@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { dataCache } from '@/lib/cache';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 3600; // Revalidate every hour
+export const revalidate = 0; // Always fetch fresh
 
 export async function GET() {
   const url = process.env.APP_ADS_URL;
@@ -17,13 +17,13 @@ export async function GET() {
   }
 
   try {
-    const data = await dataCache.fetchData('app-ads', url);
+    const data = await dataCache.fetchData('app-ads', url, false, true); // skipCache=true
     
     return new NextResponse(data, {
       status: 200,
       headers: {
         'Content-Type': 'text/plain',
-        'Cache-Control': 'public, max-age=3600', // Cache for 1 hour
+        'Cache-Control': 'no-store',
       },
     });
   } catch (error) {
